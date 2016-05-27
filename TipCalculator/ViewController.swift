@@ -34,15 +34,34 @@ class ViewController: UIViewController {
     
     var slider:UISlider = UISlider()
     
-    //currency - VND or US
-    var isVND = false  // default will be US Dollar
+    //currency - VND or others
+    var isVND = false  // default will be others, base on locale
+    var currencySymbol = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // remember bill amount and total, until the app is terminated
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let isBillSaved = defaults.boolForKey("billSaved") // this data is true when opening app, false when app is terminated
+        
+        if isBillSaved {
+            billField.text = defaults.stringForKey("bill")
+            tipLabel.text = defaults.stringForKey("tip")
+            totalLabel.text = defaults.stringForKey("total")
+        }else{
+            totalLabel.text = "\(currencySymbol)0.00"
+            tipLabel.text = "\(currencySymbol)0.00"
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
         let defaults = NSUserDefaults.standardUserDefaults()
+        let formatter = NSNumberFormatter()
+        formatter.numberStyle = .CurrencyStyle
+        formatter.locale = NSLocale.currentLocale()
+        currencySymbol = formatter.currencySymbol
+        
         // it will always be true, since the first time user Save Settings
         // if there is no value stored. return false
         
@@ -63,7 +82,7 @@ class ViewController: UIViewController {
             let theme = defaults.objectForKey("theme") as! String
             changeTheme(theme)
             
-            isVND = defaults.boolForKey("vnd_currency") // return false --> USD, true --> VND
+            isVND = defaults.boolForKey("vnd_currency") // true --> VND, false --> others
         }else{  // initial settings
             tipPercentages = [0.18, 0.2, 0.22]
             isVND = false
@@ -72,6 +91,10 @@ class ViewController: UIViewController {
         setUpeachPeopleBillLabel()
         setUpSlider()
         makeBillFieldLookBetter()
+    }
+    
+    func applicationWillTerminate(application: UIApplication) {
+        print("hello")
     }
 
     @IBAction func onEditingChange(sender: AnyObject) {
@@ -107,14 +130,29 @@ class ViewController: UIViewController {
                 
                 tipLabel.text = "\(Int(tip))k\(tipAmountRemainder)"
                 totalLabel.text = "\(Int(total))k\(totalAmountRemainder)"
-                
-                //tipLabel.text = String(format: "%.1fk", tip)
-                //totalLabel.text = String(format: "%.1fk", total)
             }
             
-        }else{ // $
-            tipLabel.text = String(format: "$%.2f", tip)
-            totalLabel.text = String(format: "$%.2f", total)
+        }else{ // other currency
+            if total > 1000 {
+                var moreThanThousands = Int(total / 1000)
+                var lessThanThousands = Double(total % 1000)
+                
+                var formattedString = String(format: "%.2f", lessThanThousands)
+                totalLabel.text = "\(currencySymbol)\(moreThanThousands).\(formattedString)"
+                
+                if tip > 1000 {
+                    moreThanThousands = Int(tip / 1000)
+                    lessThanThousands = Double(tip % 1000)
+                    
+                    formattedString = String(format: "%.2f", lessThanThousands)
+                    tipLabel.text = "\(currencySymbol)\(moreThanThousands).\(formattedString)"
+                }else{
+                    tipLabel.text = String(format: "\(currencySymbol)%.2f", tip)
+                }
+            }else{
+                tipLabel.text = String(format: "\(currencySymbol)%.2f", tip)
+                totalLabel.text = String(format: "\(currencySymbol)%.2f", total)
+            }
         }
         
         // update bill for each people
@@ -140,8 +178,14 @@ class ViewController: UIViewController {
         if isVND {
             billField.placeholder = "VND"
         }else{
-            billField.placeholder = "$"
+            billField.placeholder = currencySymbol
         }
+        
+        //add gesture recognizer in billfield
+        let onSwipe = UISwipeGestureRecognizer(target: self, action: #selector(ViewController.onBillFieldSwiped))
+        
+        billField.addGestureRecognizer(onSwipe)
+        billField.userInteractionEnabled = true
     }
     
     // Set Up UI Stuffs here
@@ -180,7 +224,7 @@ class ViewController: UIViewController {
                 eachPeopleBillLabel.text = "\(numberOfPeople) 👫: \(billForEach)k For Each"
             }
         }else{  // dollar
-            eachPeopleBillLabel.text = "\(numberOfPeople) 👫: $\(billForEach) For Each"
+            eachPeopleBillLabel.text = "\(numberOfPeople) 👫: \(currencySymbol)\(billForEach) For Each"
         }
     }
     
@@ -218,5 +262,20 @@ class ViewController: UIViewController {
         tipLabel.textColor = color
         totalLabel.textColor = color
         tipControl.tintColor = color
+    }
+
+    // gesture recognizer function
+    func onBillFieldSwiped(){
+        billField.text = ""
+        if isVND {
+            totalLabel.text = "0.00"
+            tipLabel.text = "0.00"
+            eachPeopleBillLabel.text = "\(Int(slider.value)) 👫: 0 For Each"
+        }else{
+            totalLabel.text = "\(currencySymbol)0.00"
+            tipLabel.text = "\(currencySymbol)0.00"
+            eachPeopleBillLabel.text = "\(Int(slider.value)) 👫: \(currencySymbol)0 For Each"
+        }
+        
     }
 }

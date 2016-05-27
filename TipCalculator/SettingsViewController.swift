@@ -116,11 +116,9 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         toastLabel.layer.cornerRadius = 10;
         toastLabel.clipsToBounds  =  true
         
-        let delay = 3 * Double(NSEC_PER_SEC)  // nanoseconds per seconds
-        let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-        
-        dispatch_after(dispatchTime, dispatch_get_main_queue(), {
-            
+        //self.firstView.alpha = 0
+        //self.secondView.alpha = 1
+        UIView.animateWithDuration(2, animations: {
             toastLabel.alpha = 0
         })
     }
