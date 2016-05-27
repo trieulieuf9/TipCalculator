@@ -4,7 +4,7 @@
 
 Submitted by: **Nguyen Ngoc Xuan Trieu**
 
-Time spent: **15** hours spent in total
+Time spent: **18** hours spent in total
 
 ## User Stories
 
@@ -27,16 +27,10 @@ The following **additional** features are implemented:
 - [x] User can choose Vietnamese currency, which 1 --> 1k, and 1000k --> 1m 
 
 ## Video Walkthrough 
-
-> HINT: You can put a `walkthrough.gif` file in your project folder, add to git, and use the following syntax to embed it: 
  
-> `![Video Walkthrough](walkthrough.gif)` 
- 
-> You can also upload your image to imgur.com and embed the link here.
-
 Here's a walkthrough of implemented user stories:
 
-![Video Walkthrough](path/to/your/gif)
+![Video Walkthrough](walkthrough.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
@@ -45,8 +39,8 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 Describe any challenges encountered while building the app.
 
 ## License
-
-    Copyright [yyyy] [name of copyright owner]
+ 
+    Copyright [2016] [Nguyen Ngoc Xuan Trieu]
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
