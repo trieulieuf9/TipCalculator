@@ -6,10 +6,6 @@
 //  Copyright © 2016 trieulieuf9. All rights reserved.
 //
 
-// What to do Next
-
-// Choose from Vietnamese and English, radio button
-
 import UIKit
 
 class ViewController: UIViewController {
@@ -40,19 +36,6 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // remember bill amount and total, until the app is terminated
-        let defaults = NSUserDefaults.standardUserDefaults()
-        let isBillSaved = defaults.boolForKey("billSaved") // this data is true when opening app, false when app is terminated
-        
-        if isBillSaved {
-            billField.text = defaults.stringForKey("bill")
-            tipLabel.text = defaults.stringForKey("tip")
-            totalLabel.text = defaults.stringForKey("total")
-        }else{
-            totalLabel.text = "\(currencySymbol)0.00"
-            tipLabel.text = "\(currencySymbol)0.00"
-        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -91,10 +74,6 @@ class ViewController: UIViewController {
         setUpeachPeopleBillLabel()
         setUpSlider()
         makeBillFieldLookBetter()
-    }
-    
-    func applicationWillTerminate(application: UIApplication) {
-        print("hello")
     }
 
     @IBAction func onEditingChange(sender: AnyObject) {
